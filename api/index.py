@@ -3,8 +3,10 @@ import json
 import time
 from urllib.parse import unquote
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # allow frontend requests
 
 # ============================
 # TOKEN CACHE
@@ -33,7 +35,10 @@ def get_cached_token(session):
         "Accept": "text/html",
     }
 
-    response = session.get(url, headers=headers, timeout=5)
+    try:
+        response = session.get(url, headers=headers, timeout=5)
+    except:
+        return None
 
     user_auth = session.cookies.get("user_auth")
     if not user_auth:
@@ -82,7 +87,7 @@ def get_bgmi_username(user_id):
                 "uid": user_id
             }
         else:
-            return {"error": data.get("message", "Unknown error")}
+            return {"error": data.get("message", "Invalid UID")}
 
     except:
         return {"error": "Request failed"}
