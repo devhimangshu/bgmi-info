@@ -2,10 +2,6 @@ import requests
 import json
 from urllib.parse import unquote
 
-# ============================
-# GET AUTH TOKEN
-# ============================
-
 def get_authorization_token(session):
     url = "https://www.rooter.gg/"
 
@@ -28,10 +24,6 @@ def get_authorization_token(session):
         return None
 
 
-# ============================
-# CORE LOGIC
-# ============================
-
 def get_bgmi_username(user_id):
     session = requests.Session()
 
@@ -44,9 +36,6 @@ def get_bgmi_username(user_id):
 
     headers = {
         "Authorization": f"Bearer {access_token}",
-        "Device-Type": "web",
-        "App-Version": "1.0.0",
-        "Device-Id": "vercel-api",
         "User-Agent": "Mozilla/5.0",
         "Accept": "application/json"
     }
@@ -59,9 +48,7 @@ def get_bgmi_username(user_id):
         if data.get("transaction") == "SUCCESS":
             return {
                 "username": data['unipinRes']['username'],
-                "uid": user_id,
-                "server": "BGMI",
-                "region": "India"
+                "uid": user_id
             }
         else:
             return {"error": data.get("message", "Unknown error")}
@@ -70,12 +57,9 @@ def get_bgmi_username(user_id):
         return {"error": "Invalid response"}
 
 
-# ============================
-# VERCEL HANDLER
-# ============================
-
-def handler(request):
-    uid = request.args.get("uid")
+# 🔥 IMPORTANT: Vercel expects THIS format
+def handler(request, context):
+    uid = request.query.get("uid")
 
     if not uid:
         return {
