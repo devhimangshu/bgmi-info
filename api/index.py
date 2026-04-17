@@ -1,6 +1,9 @@
 import requests
 import json
 from urllib.parse import unquote
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
 
 def get_authorization_token(session):
     url = "https://www.rooter.gg/"
@@ -52,24 +55,16 @@ def get_bgmi_username(user_id):
             }
         else:
             return {"error": data.get("message", "Unknown error")}
-
     except:
         return {"error": "Invalid response"}
 
 
-# 🔥 IMPORTANT: Vercel expects THIS format
-def handler(request, context):
-    uid = request.query.get("uid")
+@app.route("/api")
+def api():
+    uid = request.args.get("uid")
 
     if not uid:
-        return {
-            "statusCode": 400,
-            "body": json.dumps({"error": "UID is required"})
-        }
+        return jsonify({"error": "UID is required"}), 400
 
     result = get_bgmi_username(uid)
-
-    return {
-        "statusCode": 200,
-        "body": json.dumps(result)
-    }
+    return jsonify(result)
