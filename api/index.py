@@ -29,7 +29,7 @@ def get_authorization_token(session):
 
 
 # ============================
-# CORE FUNCTION (MODIFIED)
+# CORE LOGIC
 # ============================
 
 def get_bgmi_username(user_id):
@@ -67,7 +67,7 @@ def get_bgmi_username(user_id):
             return {"error": data.get("message", "Unknown error")}
 
     except:
-        return {"error": "Invalid response received"}
+        return {"error": "Invalid response"}
 
 
 # ============================
